@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playground: </title>
+
+    <link rel="stylesheet" href="./css/index.css">
+    <script src="./js/brython.min.js"></script>
+    <script src="./js/brython_stdlib.min.js"></script>
+</head>
+<body onload="brython()">
+    <div id="playground">
+        <main>
+            <div data-label="WaitingRoom">
+                <div data-scope="ControlBox">
+                    <div data-scope="BoxEar">
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <div data-scope="GameTitle">
+                        쥐를 잡자<br><span>찍찍찍!</span>
+                    </div>
+                    <div data-scope="Nickname">
+                        <input type="text" maxlength="7" placeholder="닉네임을 입력하세요...">
+                    </div>
+                    <div data-scope="Rooms-Window">
+                        <!-- Requests: Ajax Renderer -->
+                        <div data-scope="Rooms">
+                            <form>
+                                <p>
+                                    <label><input type="number" min="2" max="7" value="2">: 봇 플레이어 수</label>
+                                    <label id="shuffleChkbx"><input type="checkbox" id="chkbx_s"> 랜덤한 순서</label>
+                                    <span id="shuffleCustom">
+                                        <label>&nbsp;&nbsp;&nbsp;&nbsp;<input name="shuffleType" type="radio"> 내가 첫번째 순서</label>
+                                        <label>&nbsp;&nbsp;&nbsp;&nbsp;<input name="shuffleType" type="radio" checked> 내가 중간 순서</label>
+                                        <label>&nbsp;&nbsp;&nbsp;&nbsp;<input name="shuffleType" type="radio"> 내가 마지막 순서</label>
+                                    </span>
+
+                                    <label><input type="number" min="1" max="5" value="3.5" step=".5">: 시간제한</label>
+
+                                    <p>난이도:</p>
+                                    <span id="difficultyChoice">
+                                        <label><input name="difficulty" type="radio" value="Easy"> 쉬움</label>
+                                        <label><input name="difficulty" type="radio" value="Normal" checked> 중간</label>
+                                        <label><input name="difficulty" type="radio" value="Hard"> 어려움</label>
+                                        <label><input name="difficulty" type="radio" value="Insane"> 매우어려움</label>
+                                    </span>
+                                </p>
+                            </form>
+                        </div>
+                        
+                    </div>
+                    <div data-scope="Tools">
+                        <button data-scope="StartSinglePlay">게임 시작!</button>
+                    </div>
+                </div>
+            </div>
+
+            <div data-label="GameCanvasRenderer" hidden>
+                <div data-scope="RoomBox">
+                    <div data-scope="RoomTitle">
+                        <h1><span>몇</span> 마리~ 🐭</h1>
+                    </div>
+
+                    <div data-scope="PlayerBox"></div>
+                    
+                    <template>
+                        <div data-scope="Player__body">
+                            <p class="Player__action">♩ ♪ ♫ ♬</p>
+                            <div data-scope="Player__playing">
+                                <div>
+                                    <img src="./img/player_cat.PNG">
+                                </div>
+                                <p>닉네임</p>
+                            </div>
+                        </div>
+                    </template>
+
+                    <div data-scope="tools" data-status="Waiting">
+                        <button data-scope="Hurray">만세! 🙌</button>
+                        
+                        <button data-scope="Catch" disabled>잡았다! 💥</button>
+                        <button data-scope="Miss" disabled>놓쳤다! 💢</button>
+                        <button data-scope="Flee" disabled>도망갔다! 💨</button>
+                        
+                        <button data-scope="Exit" onclick="location.reload()">메인으로 🏡</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <div id="router">
+            
+            
+            <div data-label="GameResultRenderer"></div>
+        </div>
+    </div>
+    <div id="background"></div>
+
+    <script src="./js/custom_setting_reader.js"></script>
+    <script type="text/python" src="./js/base.py"></script>
+    <!-- <script src="./js/base.js"></script> -->
+</body>
+</html>
