@@ -287,9 +287,12 @@ class Player:
             game_session.counts = 0
             game_session.mice = None
             
+            def Init():
+                for element in document.select(".Player__action"):
+                    element.text = "♩ ♪ ♫ ♬"
 
-            for element in document.select(".Player__action"):
-                element.text = "♩ ♪ ♫ ♬"
+            timer.set_timeout(Init, 400)
+            
 
             if not bot_mistaked:
                 game_session.next_seq()
