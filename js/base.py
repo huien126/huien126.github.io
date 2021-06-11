@@ -8,18 +8,21 @@ settings = None
 
 game_session = None
 
-main_song = html.AUDIO(src="./sounds/main_song.m4a")
-catch_sound = html.AUDIO(src="./sounds/caught.m4a")
-catch_sound_s = html.AUDIO(src="./sounds/caught_effect.m4a")
-missed_sound = html.AUDIO(src="./sounds/missed.m4a")
-fled_sound = html.AUDIO(src="./sounds/fled.m4a")
+sounds_ = html.AUDIO(src="./sounds/sound_effects.mp3")
+
+# main_song = html.AUDIO(src="./sounds/main_song.m4a")
+# catch_sound = html.AUDIO(src="./sounds/caught.m4a")
+# catch_sound_s = html.AUDIO(src="./sounds/caught_effect.m4a")
+# missed_sound = html.AUDIO(src="./sounds/missed.m4a")
+# fled_sound = html.AUDIO(src="./sounds/fled.m4a")
 
 """ @brython(preload) """
-document <= main_song
-document <= catch_sound
-document <= catch_sound_s
-document <= missed_sound
-document <= fled_sound
+# document <= main_song
+# document <= catch_sound
+# document <= catch_sound_s
+# document <= missed_sound
+# document <= fled_sound
+
 
 
 
@@ -153,17 +156,19 @@ class Player:
     def my_turn(self):
         return game_session.players[game_session.turn] == self
 
-    def view_state(self, text):
+    def view_state(self, text, img="player_cat.PNG"):
         self.view_dom.select("p")[0].text = text
+        self.view_dom.select("img")[0].src = "./img/{0}".format(img)
 
     def mouse_caught(self, event):
         if self.my_turn():
             self.responded()
-            catch_sound.play()
-            self.view_state("잡았다! 💥")
+            sounds_.currentTime = 25
+            timer.set_timeout(lambda: sounds_.pause() ,430)
+            sounds_.play()
+            self.view_state("잡았다! 💥", "player_caught.jpeg")
             if not game_session.hurray_time:
                 game_session.counts += 1
-                catch_sound_s.play()
                 timer.set_timeout(lambda: self.view_state("♩ ♪ ♫ ♬"), 900)
                 game_session.next_seq()
 
@@ -218,8 +223,10 @@ class Player:
     def mouse_missed(self, event):
         if self.my_turn():
             self.responded()
-            missed_sound.play()
-            self.view_state("놓쳤다! 💢")
+            sounds_.currentTime = 25.4
+            timer.set_timeout(lambda: sounds_.pause() ,420)
+            sounds_.play()
+            self.view_state("놓쳤다! 💢", "player_missed.PNG")
             if game_session.hurray_time:
                 if self.bot:
                     pass
@@ -240,16 +247,22 @@ class Player:
                 if self.bot:
                     pass
                 else:
-                    fled_sound.play()
+                    sounds_.currentTime = 25.8
+                    timer.set_timeout(lambda: sounds_.pause() ,420)
+                    sounds_.play()
                     you_lose("이런~! 만세를 외쳐야해요!")
                     window.location.reload()
             else:
                 if self.bot and game_session.counts < 1:
-                    missed_sound.play()
-                    self.view_state("놓쳤다! 💢")
+                    sounds_.currentTime = 25.4
+                    timer.set_timeout(lambda: sounds_.pause() ,420)
+                    sounds_.play()
+                    self.view_state("놓쳤다! 💢", "player_missed.PNG")
                 else:
-                    fled_sound.play()
-                    self.view_state("도망갔다! 💨")
+                    sounds_.currentTime = 25.8
+                    timer.set_timeout(lambda: sounds_.pause() ,420)
+                    sounds_.play()
+                    self.view_state("도망갔다! 💨", "player_fled.PNG")
                     if game_session.counts < 1:
                         you_lose("이런~ 도망갈 쥐가 없어요~")
                         window.location.reload()
@@ -266,7 +279,7 @@ class Player:
             print("아직 당신의 차례가 아닙니다.")
 
     def mouse_hurray(self, event):
-        self.view_state("만세! 🙌")
+        self.view_state("만세! 🙌", "player_hurrayed.PNG")
         timer.set_timeout(lambda: self.view_state("♩ ♪ ♫ ♬"), 400)
         self.responded()
         if game_session.hurray_time:
@@ -281,7 +294,7 @@ class Player:
                     bot.view_state("(멀뚱?) 🥱")
                     timer.set_timeout(bot.clear, 500)
                 else:
-                    bot.view_state("만세! 🙌")
+                    bot.view_state("만세! 🙌", "player_hurrayed.PNG")
                     timer.set_timeout(lambda: bot.view_state("♩ ♪ ♫ ♬"), 400)
             
             game_session.counts = 0
@@ -298,9 +311,9 @@ class Player:
                 game_session.next_seq()
                 document.select("[data-scope='RoomTitle'] span")[0].text = "몇"
 
-                main_song.currentTime = 13.5
-                main_song.play()
-                timer.set_timeout(lambda: main_song.pause(), 1500)
+                sounds_.currentTime = 13.5
+                sounds_.play()
+                timer.set_timeout(lambda: sounds_.pause(), 1500)
                 timer.set_timeout(lambda: game_session.turn_begin(), 1600)
                 
 
@@ -337,10 +350,10 @@ class Player:
             if len(game_session.players) <= game_session.turn:
                 game_session.next_seq()
 
-            main_song.currentTime = 15.7
-            main_song.play()
+            sounds_.currentTime = 15.7
+            sounds_.play()
             
-            timer.set_timeout(lambda: main_song.pause(), 9300)
+            timer.set_timeout(lambda: sounds_.pause(), 9300)
             timer.set_timeout(lambda: game_session.turn_begin(), 9400)
             
 
@@ -355,8 +368,8 @@ class Game:
         self.timer = None
         self.hurray_time = False
 
-        main_song.play()
-        timer.set_timeout(lambda: main_song.pause(), 15750)
+        sounds_.play()
+        timer.set_timeout(lambda: sounds_.pause(), 15750)
         
         timer.set_timeout(lambda: self.turn_begin(), 15800)
         
@@ -432,7 +445,7 @@ class Game:
                     do = ["mouse_caught", "mouse_missed", "mouse_fled"]
                     getattr(self.players[self.turn], do[floor(random() * 3)])("")
                 
-                response_sec = (1 + random() * (self.time_limits - 1))
+                response_sec = (.4 + random() * (self.time_limits - .4))
 
                 print("bot will give its response to the game:", response_sec)
                     
