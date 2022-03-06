@@ -137,8 +137,8 @@ input:focus {
             <div class="title">우송대학교 모바일 학생증</div>
             <div class="actions">
                 <div id="StudentWelcome">
-                    <input type="number" required placeholder="Student Number">
-                    <input type="text" required placeholder="Student Name">
+                    <input type="number" id="StudentId" required placeholder="Student Number">
+                    <input type="text" id="StudentName" required placeholder="Student Name">
                 </div>
                 <div class="follow-btn">
                     <button id="RegisterOrRenew">Register your information</button>
@@ -183,7 +183,6 @@ input:focus {
 
                             console.log(RespondedXMLDocument);
 
-
                         } else {
                             window.alert("내부 오류로 인해 현재 사용자 확인이 불가능합니다. 죄송합니다.");
                         }
@@ -198,10 +197,22 @@ input:focus {
             }
 
             if(!Initalization(getQrCodeUrl)) {
-                
+                document.getElementById('RegisterOrRenew').onclick = function() {
+                    var StudentId = document.getElementById('StudentId').value.trim();
+                    var StudentName = document.getElementById('StudentName').value.trim();
+
+                    if(StudentId.length == 9 && StudentName != "") {
+                        SelfAuthentication(StudentId, StudentName, function(response) {
+
+                        });
+                    } else {
+                        window.alert("학번과 이름을 다시 확인해주세요.")
+                    }
+                }
             }
         })(function(getQrCode) {
             var StudentId = localStorage.getItem("StudentId");
+
 
             if(StudentId == null) {
                 document.getElementById("StudentWelcome").style.display = "block";
