@@ -177,9 +177,9 @@ input:focus {
                     }).toString()
                 }).then(Response => Response.json())
                   .then(Response => {
-                        if(response.success) {
+                        if(Response.success) {
                             var XMLParser = new DOMParser();
-                            var RespondedXMLDocument = XMLParser.parseFromString(response.result, 'text/xml');
+                            var RespondedXMLDocument = XMLParser.parseFromString(Response.result, 'text/xml');
 
                             console.log(RespondedXMLDocument);
 
