@@ -169,12 +169,12 @@ input:focus {
                 fetch("https://wsu-secure.movent.me/api/isMatchStudentIdAndName?code="+key, {
                     "method": 'POST',
                     "headers": {
-                        "Content-Type": 'application/x-www-form-urlencoded',
+                        "Content-Type": 'application/json',
                     },
-                    "body": new URLSearchParams({
+                    "body": JSON.stringify({
                         "StudentId": StudentId,
                         "StudentName": StudentName
-                    }).toString()
+                    })
                 }).then(Response => Response.json())
                   .then(Response => {
                         if(Response.success) {
