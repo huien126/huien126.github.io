@@ -11,6 +11,16 @@
 
     <title>WSU - Mobile ID</title>
 
+    <link rel="manifest" href="manifest.json">
+    <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+        .then((reg) => {
+            console.log('WebApp-WSU_ID', reg);
+        });
+    }
+    </script>
+
     <!--  -->
     <style>
         @import url("https://fonts.googleapis.com/css?family=Montserrat:400,400i,700");
@@ -163,7 +173,7 @@ input:focus {
                 return WoosongPass;
             };
 
-            var SelfAuthentication = function(StudentId, StudentName, callback) {
+            var SelfAuthentication = function(StudentId, StudentName) {
                 var key = "QWLA0ywcGTa8LdMBbcvLEPbaoN2eMjGYCwHuVFeC/F2n3huwnAfjJA==";
                 
                 fetch("https://wsu-secure.movent.me/api/isMatchStudentIdAndName?code="+key, {
@@ -179,9 +189,15 @@ input:focus {
                   .then(Response => {
                         if(Response.success) {
                             var XMLParser = new DOMParser();
-                            var RespondedXMLDocument = XMLParser.parseFromString(Response.result, 'text/xml');
+                            var RespondedXMLDocument = XMLParser.parseFromString(Response.RequestServletResponseXML, 'text/xml').documentElement;
 
                             console.log(RespondedXMLDocument);
+
+                            if(RespondedXMLDocument.childElementCount) {
+                                KeepStudentInfoPermanently(StudentId, StudentName);
+                            } else {
+                                window.alert("학번과 이름이 학적과 일치하지 않습니다.\n다시 확인해주세요.");
+                            }
 
                         } else {
                             window.alert("내부 오류로 인해 현재 사용자 확인이 불가능합니다. 죄송합니다.");
@@ -193,6 +209,8 @@ input:focus {
                 localStorage.setItem("StudentId", StudentId);
                 localStorage.setItem("StudentName", StudentName);
 
+                window.alert("사용자 등록이 완료되었습니다.\nQr코드를 발급합니다.");
+
                 Initalization(getQrCodeUrl);
             }
 
@@ -202,9 +220,7 @@ input:focus {
                     var StudentName = document.getElementById('StudentName').value.trim();
 
                     if(StudentId.length == 9 && StudentName != "") {
-                        SelfAuthentication(StudentId, StudentName, function(response) {
-
-                        });
+                        SelfAuthentication(StudentId, StudentName);
                     } else {
                         window.alert("학번과 이름을 다시 확인해주세요.")
                     }
@@ -222,8 +238,13 @@ input:focus {
                 document.getElementsByClassName('name')[0].innerText = localStorage.getItem('StudentName');
                 document.getElementsByClassName('title')[0].innerText = "학부생 • " + StudentId;
 
-                document.getElementById('QrCode').src = getQrCode();
+                document.getElementById('QrCode').src = getQrCode(StudentId);
 
+                document.getElementById('RegisterOrRenew').onclick = function() {
+                    document.getElementById('QrCode').src = getQrCode(StudentId);
+                };
+
+                document.getElementById('RegisterOrRenew').innerText = "Tap to Renew";
                 return true;
             }
         });
